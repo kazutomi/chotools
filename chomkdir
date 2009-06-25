@@ -1,0 +1,39 @@
+#!/usr/bin/env ruby
+
+# Mac FS uses UTF-8 for file names
+$KCODE='u'
+
+# load my library
+Libdir=File.dirname(__FILE__)
+require "#{Libdir + '/cholib.rb'}"
+
+def usage
+  $stderr.puts "usage: #{File.basename(__FILE__)} <dir>"
+end
+
+def main
+  if ARGV.size != 1
+    usage
+    exit 1
+  end
+  dir = ARGV[0]
+
+  if not File.directory?(dir)
+    Dir.mkdir(dir)	# may fail but let it do so if it does
+  end
+
+  Dir.chdir(dir) do
+    if Cho.ischodir?
+      $stderr.puts "#{dir} seems to be already a cho directory"
+      exit 1
+    end
+    Cho.newinfofiles
+  end
+
+  canondir = Cho.canondir(dir)
+  Cho.toplist(canondir)
+  puts canondir
+  0
+end
+
+main

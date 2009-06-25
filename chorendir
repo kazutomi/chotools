@@ -1,0 +1,47 @@
+#!/usr/bin/env ruby
+
+# Mac FS uses UTF-8 for file names
+$KCODE='u'
+
+# load my library
+Libdir=File.dirname(__FILE__)
+require "#{Libdir + '/cholib.rb'}"
+
+def usage
+  $stderr.puts "usage: #{File.basename(__FILE__)} <orig path> <new path>"
+end
+
+def main
+  if ARGV.size != 2
+    usage
+    exit 1
+  end
+  opath = ARGV[0]
+  npath = ARGV[1]
+
+  if not File.directory?(opath)
+    $stderr.puts "directory #{opath} does not exist"
+    exit 1
+  end
+
+  # XXX some part of the following process may have to compose a critical region
+
+  if not Cho.ischodir?(opath)
+    $stderr.puts "#{opath} doesn't seem to be a cho directory"
+    exit 1
+  end
+  ocanondir = Cho.canondir(opath)	# get it before it moves
+
+  if File.exist?(npath)
+    $stderr.puts "#{npath} exists"
+    exit 1
+  end
+
+  File.rename(opath, npath)
+  ncanondir = Cho.canondir(npath)
+
+  Cho.renameinlist(ocanondir, ncanondir)
+  0
+end
+
+main

@@ -1,0 +1,47 @@
+#!/usr/bin/env ruby
+
+# Mac FS uses UTF-8 for file names
+$KCODE='u'
+
+# load my library
+Libdir=File.dirname(__FILE__)
+require "#{Libdir + '/cholib.rb'}"
+
+def usage
+  $stderr.puts "usage: #{File.basename(__FILE__)} <tag>"
+end
+
+def main
+  if ARGV.size != 1
+    usage
+    exit 1
+  end
+  tag = ARGV[0]
+
+  if (num = Cho.tagtonum(tag)) == -1
+    $stderr.puts "no such tag as #{tag}"
+    puts Cho::ChoHome
+  end
+
+  dir = nil
+  open(Cho::CacheFile, "r") do |cf|
+    num.times do
+      cf.gets		# discard num lines
+    end
+    l = cf.gets
+    if l
+      dir = l.chomp
+    else
+      dir = nil
+    end
+  end
+  if dir.nil?
+    $stderr.puts "tag #{tag} does not specify a cho directory"
+    puts Cho::ChoHome
+    exit 1
+  end
+  puts Cho::ChoHome + '/' + dir
+  0
+end
+
+main

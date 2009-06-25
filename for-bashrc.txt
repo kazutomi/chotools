@@ -1,0 +1,19 @@
+alias chols=f_chols
+alias chomkdir=f_chomkdir
+function chocd {
+  cd "`chomap $1`"
+}
+function chou {
+  pushd . > /dev/null
+  chocd "$1"
+  dirs
+}
+function f_chomkdir {
+  \chomkdir "$1"
+  chocd a
+  open .
+  open _cho_title.txt
+}
+function f_chols {
+  \chols "$@" | more
+}

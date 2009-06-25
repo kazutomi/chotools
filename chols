@@ -1,0 +1,46 @@
+#!/usr/bin/env ruby
+
+# Mac FS uses UTF-8 for file names
+$KCODE='u'
+
+# load my library
+Libdir=File.dirname(__FILE__)
+require "#{Libdir + '/cholib.rb'}"
+
+def usage
+  $stderr.puts "usage: #{File.basename(__FILE__)} <keyword>"
+end
+
+def main
+  pat = nil
+  if ARGV.size > 1
+    usage
+    exit 1
+  elsif ARGV.size == 1
+    pat = Regexp.new(ARGV[0], Regexp::IGNORECASE)
+  end
+
+  open(Cho::CacheFile, "r") do |cf|
+    i = 0
+    cf.each do |l|
+      l.chomp!
+      dir   = Cho::ChoHome + '/' + l
+      if pat.nil? or pat =~ dir
+	tfile = dir + '/' + Cho::TitleFileName
+	if File.exist?(tfile)
+	  title = nil
+	  open(tfile, "r") do |tf|
+	    title = tf.gets.chomp
+	  end
+	  printf "(%s) %s (%s)\n", Cho.numtotag(i) || '  ', title, l
+	  $stdout.flush
+	# else: it does not exist (maybe unmounted), but is counted to generate tags
+	end
+      end
+      i += 1
+    end
+  end
+  0
+end
+
+main

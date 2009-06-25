@@ -1,0 +1,69 @@
+#!/usr/bin/env ruby
+
+# Mac FS uses UTF-8 for file names
+$KCODE='u'
+
+# load my library
+Libdir=File.dirname(__FILE__)
+require "#{Libdir + '/cholib.rb'}"
+
+def usage
+  $stderr.puts "usage: #{File.basename(__FILE__)} <dir>"
+end
+
+def main
+  if ARGV.size != 1
+    usage
+    exit 1
+  end
+  dir = ARGV[0]
+
+  if not File.directory?(dir)
+    $stderr.puts "directory #{dir} does not exist"
+    exit 1
+  end
+
+  Dir.chdir(dir) do
+    if not Cho.ischodir?
+      $stderr.puts "#{dir} doesn't seem to be a cho directory"
+      exit 1
+    end
+
+    userfiles = Cho.userfiles
+    if userfiles.size > 0
+      $stderr.puts "directory not empty; following files are left"
+      userfiles.each do |d|
+	$stderr.print "#{d} "
+      end
+      $stderr.puts
+      $stderr.print "remove? [y/N] "
+      l = $stdin.gets.chomp
+      if l == 'y' || l == 'Y' || l == 'yes' || l == 'YES' || l == 'Yes'
+	# continue to remove the files
+      else
+	$stderr.puts "nothing done."
+	exit 1
+      end
+
+      # remove remaining user files (directories, etc.)
+      userfiles.each do |f|
+	FileUtils.remove_entry(f)
+      end
+    end
+
+    Cho.unlinkchofiles
+    Cho.unlinkignorefiles
+  end
+
+  canondir = Cho.canondir(dir)	# Cho.canondir requires existence of dir
+  Dir.unlink(dir)
+
+  if Cho.removefromlist(canondir)
+    exit 0
+  else
+    $stderr.puts "#{canondir} not found in the cache file (the specified directory has been removed anyway)"
+    exit 1
+  end
+end
+
+main
