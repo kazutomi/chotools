@@ -32,9 +32,7 @@ def main
 	  tf.rewind
 	  tf.each do |t|
 	    t.chomp!
-	    if t == Cho::Keyword	# we always have this; ignore
-	      next
-	    elsif pat =~ t
+	    if pat =~ t
 	      found = true
 	      break
 	    end
