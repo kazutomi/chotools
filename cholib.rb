@@ -1,4 +1,11 @@
+# coding: utf-8
+$KCODE = 'UTF8' if RUBY_VERSION < '1.9.0'
+
 require 'fileutils'
+
+if RUBY_VERSION < "1.9.0"
+  $KCODE = 'u'
+end
 
 module Cho
   TagLetters = [ 'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z' ]

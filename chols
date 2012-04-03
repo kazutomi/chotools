@@ -1,7 +1,8 @@
 #!/usr/bin/env ruby
+# coding: utf-8
+$KCODE = 'UTF8' if RUBY_VERSION < '1.9.0'
 
-# Mac FS uses UTF-8 for file names
-$KCODE='u'
+require 'optparse'
 
 # load my library
 Libdir=File.dirname(__FILE__)
@@ -12,6 +13,12 @@ def usage
 end
 
 def main
+  long = false          # option -l sets this true
+
+  opt = OptionParser.new
+  opt.on('-l'){|v| long = true}
+  opt.parse!(ARGV)
+
   pat = nil
   if ARGV.size > 1
     usage
@@ -32,7 +39,20 @@ def main
 	  open(tfile, "r") do |tf|
 	    title = tf.gets.chomp
 	  end
-	  printf "(%s) %s (%s)\n", Cho.numtotag(i) || '  ', title, l
+          if long
+            ufile = dir + '/' + Cho::UsedDateFileName
+            if File.exist?(ufile)
+              utime = nil
+              open(ufile, "r") do |uf|
+                utime = ' ' + Time.at(uf.gets.to_i).strftime('%Y/%m/%d')
+              end
+            else
+              utime = ' ????/??/??'
+            end
+          else
+            utime = ''
+          end
+	  printf "(%s)%s %s (%s)\n", Cho.numtotag(i) || '  ', utime, title, l
 	  $stdout.flush
 	# else: it does not exist (maybe unmounted), but is counted to generate tags
 	end
