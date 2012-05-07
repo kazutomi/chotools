@@ -1,7 +1,13 @@
 alias chols=f_chols
 alias chomkdir=f_chomkdir
 function chocd {
-  cd "`chomap $1`"
+  if [ $# = 0 -a "$CHODEFHOME" != "" ]; then
+    cd "$CHODEFHOME"
+  elif [ $# = 1 ]; then
+    cd `chomap "$1"`
+  else
+    echo "usage: chocd [tag]" 1>&2
+  fi
 }
 function chou {
   pushd . > /dev/null
