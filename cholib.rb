@@ -240,8 +240,10 @@ module Cho
       f.puts t.to_s
     end
     open(TitleFileName, "w", 0666) do |f|
-      STDERR.print "Label: "
-      f.puts STDIN.gets
+      STDERR.print "Title: "
+      f.puts STDIN.gets.strip
+      STDERR.print "Keywords (space separated): "
+      f.puts STDIN.gets.strip.split.join("\n")
     end
   end
 
