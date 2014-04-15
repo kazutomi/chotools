@@ -9,10 +9,7 @@ function chou {
   dirs
 }
 function f_chomkdir {
-  \chomkdir "$1"
-  chocd a
-  open .
-  open _cho_title.txt
+  \chomkdir "$1" && chocd a
 }
 function f_chols {
   \chols "$@" | more

@@ -59,7 +59,6 @@ module Cho
   UsedDateFileName    = "#{Prefix}used.txt"
   TitleFileName       = "#{Prefix}title.txt"
   ChoFileNames        = [ CreatedDateFileName, UsedDateFileName, TitleFileName ]
-  Keywords            = [ "title" ]	# to put in title files; XXX: is this useful?
 
   CreateExclusively = File::Constants::WRONLY | File::Constants::CREAT | File::Constants::EXCL
 
@@ -241,9 +240,8 @@ module Cho
       f.puts t.to_s
     end
     open(TitleFileName, "w", 0666) do |f|
-      Keywords.each do |w|
-	f.puts w
-      end
+      STDERR.print "Label: "
+      f.puts STDIN.gets
     end
   end
 
