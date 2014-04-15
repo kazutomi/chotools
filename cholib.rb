@@ -8,7 +8,7 @@ if RUBY_VERSION < "1.9.0"
 end
 
 module Cho
-  TagLetters = [ 'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z' ]
+  TagLetters = %w(a b c d e f g h i j k l m n o p q r s t u v w x y z)
   NumToTag   = Hash.new
   TagToNum   = Hash.new
 
@@ -24,9 +24,9 @@ module Cho
     # two letters
     TagLetters.each do |t|
       TagLetters.each do |u|
-	NumToTag[i] = t + u
-	TagToNum[t + u] = i
-	i += 1
+        NumToTag[i] = t + u
+        TagToNum[t + u] = i
+        i += 1
       end
     end
   end
@@ -69,9 +69,9 @@ module Cho
     open(newlink, CreateExclusively, 0666) do |new|
       # lock obtained
       open(origfile, "r") do |orig|
-	orig.each do |l|
-	  new.puts l
-	end
+        orig.each do |l|
+          new.puts l
+        end
       end
     end
   end
@@ -91,11 +91,11 @@ module Cho
       d.shift
     end
     diff = nil
-    if b.size == 0 && d.size == 0	# base itself
+    if b.size == 0 && d.size == 0  # base itself
       diff = '.'
-    elsif b.size == 0			# dir is below the base
+    elsif b.size == 0  # dir is below the base
       diff = d.join('/')
-    elsif d.size == 0			# dir is above the base
+    elsif d.size == 0  # dir is above the base
       diff = Array.new(b.size, '..').join('/')
     else
       diff = Array.new(b.size, '..').join('/') + '/' + d.join('/')
@@ -125,18 +125,18 @@ module Cho
     rstr = Regexp.quote(str)
     r    = Regexp.new('^' + rstr + '$')
 
-    FileUtils.touch(CacheFile)	# to ensure it exists
+    FileUtils.touch(CacheFile)  # to ensure it exists
 
     self.lockandcopy(CacheFile, LockFile)
     File.unlink(CacheFile)
 
     open(LockFile, "r") do |lf|
       open(CacheFile, "w") do |cf|
-	cf.puts str
-	lf.each do |l|
-	  l.chomp!
-	  cf.puts l unless r =~ l
-	end
+        cf.puts str
+        lf.each do |l|
+          l.chomp!
+          cf.puts l unless r =~ l
+        end
       end
     end
     File.unlink(LockFile)
@@ -155,14 +155,14 @@ module Cho
     found = false
     open(LockFile, "r") do |lf|
       open(CacheFile, "w") do |cf|
-	lf.each do |l|
-	  l.chomp!
-	  if r =~ l
-	    found = true
-	  else
-	    cf.puts l
-	  end
-	end
+        lf.each do |l|
+          l.chomp!
+          if r =~ l
+            found = true
+          else
+            cf.puts l
+          end
+        end
       end
     end
     File.unlink(LockFile)
@@ -183,13 +183,13 @@ module Cho
     found = false
     open(LockFile, "r") do |f|
       f.each do |l|
-	l.chomp!
-	if r =~ l
-	  outstr << nstr << "\n"
-	  found = true
-	else
-	  outstr << l << "\n"
-	end
+        l.chomp!
+        if r =~ l
+          outstr << nstr << "\n"
+          found = true
+        else
+          outstr << l << "\n"
+        end
       end
     end
     if not found
@@ -207,9 +207,9 @@ module Cho
     ignoreFileNames = []
     begin
       open(IgnoreFile, "r") do |f|
-	f.each do |l|
-	  ignoreFileNames << l.chomp
-	end
+        f.each do |l|
+          ignoreFileNames << l.chomp
+        end
       end
     rescue
       # no ignore-file
@@ -256,9 +256,9 @@ module Cho
   def self.unlinkignorefiles
     self.ignorefilenames.each do |f|
       begin
-	FileUtils.remove_entry(f)		# may be directories or special files...
+        FileUtils.remove_entry(f)  # may be directories or special files...
       rescue
-	# to ignore errors on trying to remove nonexistent files
+        # to ignore errors on trying to remove nonexistent files
       end
     end
   end
