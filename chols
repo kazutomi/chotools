@@ -33,12 +33,12 @@ def main
       l.chomp!
       dir   = Cho::ChoHome + '/' + l
       if pat.nil? or pat =~ dir
-	tfile = dir + '/' + Cho::TitleFileName
-	if File.exist?(tfile)
-	  title = nil
-	  open(tfile, "r") do |tf|
-	    title = tf.gets.chomp
-	  end
+        tfile = dir + '/' + Cho::TitleFileName
+        if File.exist?(tfile)
+          title = nil
+          open(tfile, "r") do |tf|
+            title = tf.gets.chomp
+          end
           if long
             ufile = dir + '/' + Cho::UsedDateFileName
             if File.exist?(ufile)
@@ -52,10 +52,10 @@ def main
           else
             utime = ''
           end
-	  printf "(%s)%s %s (%s)\n", Cho.numtotag(i) || '  ', utime, title, l
-	  $stdout.flush
-	# else: it does not exist (maybe unmounted), but is counted to generate tags
-	end
+          printf "(%s)%s %s (%s)\n", Cho.numtotag(i) || '  ', utime, title, l
+          $stdout.flush
+        # else: it does not exist (maybe unmounted), but is counted to generate tags
+        end
       end
       i += 1
     end
