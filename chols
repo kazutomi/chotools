@@ -9,7 +9,7 @@ Libdir=File.dirname(__FILE__)
 require "#{Libdir + '/cholib.rb'}"
 
 def usage
-  $stderr.puts "usage: #{File.basename(__FILE__)} <keyword>"
+  $stderr.puts "usage: #{File.basename(__FILE__)} [-lksh] <pattern>"
 end
 
 def main
