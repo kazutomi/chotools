@@ -1,7 +1,0 @@
-chopwd
-
-To fix:
-- chols and chogrep have much in common; DRY
-- when lock in cholib.rb fails, the process remains inconsistency
-- "chormdir ." fails at the last step
-
