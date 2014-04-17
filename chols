@@ -28,6 +28,31 @@ def match_keywords(pat, title_file_path)
   false
 end
 
+def show_dirline(path, tag, item, long)
+  tfile  = path + '/' + Cho::TitleFileName
+  if File.exist?(tfile)
+    title = nil
+    open(tfile, "r") do |tf|
+      title = tf.gets.chomp
+    end
+    if long
+      ufile = path + '/' + Cho::UsedDateFileName
+      if File.exist?(ufile)
+        utime = nil
+        open(ufile, "r") do |uf|
+          utime = ' ' + Time.at(uf.gets.to_i).strftime('%Y/%m/%d')
+        end
+      else
+        utime = ' ????/??/??'
+      end
+    else
+      utime = ''
+    end
+    printf "(%s)%s %s (%s)\n", tag || '  ', utime, title, item
+    $stdout.flush  # for slow machines
+  end
+end
+
 def main
   # options
   long = false          # -l
@@ -58,33 +83,12 @@ def main
   open(Cho::CacheFile, "r") do |cf|
     i = 0
     cf.each do |l|
-      drpath = l.chomp
-      dapath = Cho::ChoHome + '/' + drpath
-      tfile  = dapath + '/' + Cho::TitleFileName
-      if match_dirname(pat, drpath) or
+      item = l.chomp
+      dpath = Cho::ChoHome + '/' + item
+      tfile = dpath + '/' + Cho::TitleFileName
+      if match_dirname(pat, item) or
          grep_keywords && match_keywords(pat, tfile)
-        if File.exist?(tfile)
-          title = nil
-          open(tfile, "r") do |tf|
-            title = tf.gets.chomp
-          end
-          if long
-            ufile = dapath + '/' + Cho::UsedDateFileName
-            if File.exist?(ufile)
-              utime = nil
-              open(ufile, "r") do |uf|
-                utime = ' ' + Time.at(uf.gets.to_i).strftime('%Y/%m/%d')
-              end
-            else
-              utime = ' ????/??/??'
-            end
-          else
-            utime = ''
-          end
-          printf "(%s)%s %s (%s)\n", Cho.numtotag(i) || '  ', utime, title, drpath
-          $stdout.flush
-        # else: it does not exist (maybe unmounted), but is counted to generate tags
-        end
+        show_dirline(dpath, Cho.numtotag(i), item, long)
       end
       i += 1
     end
