@@ -13,18 +13,30 @@ def usage
 end
 
 def main
-  long = false          # option -l sets this true
+  # options
+  long = false          # -l
+  grep_keywords = false # -k
+  case_strict = false   # -s
+  help = false          # -h
 
   opt = OptionParser.new
   opt.on('-l'){|v| long = true}
+  opt.on('-k'){|v| grep_keywords = true}
+  opt.on('-s'){|v| case_strict = true}
+  opt.on('-h'){|v| help = true}
   opt.parse!(ARGV)
 
-  pat = nil
-  if ARGV.size > 1
-    usage
-    exit 1
-  elsif ARGV.size == 1
-    pat = Regexp.new(ARGV[0], Regexp::IGNORECASE)
+  case ARGV.size
+  when 0
+    pat = //  # matches anything
+  when 1
+    if case_strict
+      pat = Regexp.new(ARGV[0])
+    else
+      pat = Regexp.new(ARGV[0], Regexp::IGNORECASE)
+    end
+  else
+    usage; exit 1
   end
 
   open(Cho::CacheFile, "r") do |cf|
