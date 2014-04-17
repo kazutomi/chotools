@@ -12,6 +12,22 @@ def usage
   $stderr.puts "usage: #{File.basename(__FILE__)} [-lksh] <pattern>"
 end
 
+def match_dirname(pat, dirname)
+  pat =~ File.basename(dirname)
+end
+
+def match_keywords(pat, title_file_path)
+  begin
+    open(title_file_path) do |tf|
+      tf.each do |keyword|
+        return true if pat =~ keyword
+      end
+    end
+  rescue Errno::ENOENT
+  end
+  false
+end
+
 def main
   # options
   long = false          # -l
@@ -44,8 +60,9 @@ def main
     cf.each do |l|
       drpath = l.chomp
       dapath = Cho::ChoHome + '/' + drpath
-      if pat =~ File.basename(drpath)
-        tfile = dapath + '/' + Cho::TitleFileName
+      tfile  = dapath + '/' + Cho::TitleFileName
+      if match_dirname(pat, drpath) or
+         grep_keywords && match_keywords(pat, tfile)
         if File.exist?(tfile)
           title = nil
           open(tfile, "r") do |tf|
