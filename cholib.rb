@@ -43,7 +43,6 @@ module Cho
     end
   end
 
-  # Editor  = ENV['CHOEDITOR'] ? ENV['CHOEDITOR'] : 'open'	# XXX automatic editing moved to shell alias
   ChoHome = ENV['CHOHOME'] ? ENV['CHOHOME'] : ENV['HOME']	# base from which canonical dir name is calculated
 
   CacheFile  = "#{ChoHome}/.cho_cache"
