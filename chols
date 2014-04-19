@@ -9,53 +9,84 @@ Libdir=File.dirname(__FILE__)
 require "#{Libdir + '/cholib.rb'}"
 
 def usage
-  $stderr.puts "usage: #{File.basename(__FILE__)} <keyword>"
+  $stderr.puts "usage: #{File.basename(__FILE__)} [-lksh] <pattern>"
+end
+
+def match_dirname(pat, dirname)
+  pat =~ File.basename(dirname)
+end
+
+def match_keywords(pat, title_file_path)
+  begin
+    open(title_file_path) do |tf|
+      tf.each do |keyword|
+        return true if pat =~ keyword
+      end
+    end
+  rescue Errno::ENOENT
+  end
+  false
+end
+
+def show_dirline(path, tag, item, long)
+  tfile  = path + '/' + Cho::TitleFileName
+  if File.exist?(tfile)
+    title = nil
+    open(tfile, "r") do |tf|
+      title = tf.gets.chomp
+    end
+    if long
+      ufile = path + '/' + Cho::UsedDateFileName
+      if File.exist?(ufile)
+        utime = nil
+        open(ufile, "r") do |uf|
+          utime = ' ' + Time.at(uf.gets.to_i).strftime('%Y/%m/%d')
+        end
+      else
+        utime = ' ????/??/??'
+      end
+    else
+      utime = ''
+    end
+    printf "(%s)%s %s (%s)\n", tag || '  ', utime, title, item
+    $stdout.flush  # for slow machines
+  end
 end
 
 def main
-  long = false          # option -l sets this true
+  # options
+  long = false          # -l
+  grep_keywords = false # -k
+  case_strict = false   # -s
 
   opt = OptionParser.new
-  opt.on('-l'){|v| long = true}
+  opt.on('-l', 'Long format (shows touched date)'){|v| long = true}
+  opt.on('-k', 'Also search in title file'){|v| grep_keywords = true}
+  opt.on('-s', 'Case-strict search'){|v| case_strict = true}
   opt.parse!(ARGV)
 
-  pat = nil
-  if ARGV.size > 1
-    usage
-    exit 1
-  elsif ARGV.size == 1
-    pat = Regexp.new(ARGV[0], Regexp::IGNORECASE)
+  case ARGV.size
+  when 0
+    pat = //  # matches anything
+  when 1
+    if case_strict
+      pat = Regexp.new(ARGV[0])
+    else
+      pat = Regexp.new(ARGV[0], Regexp::IGNORECASE)
+    end
+  else
+    usage; exit 1
   end
 
   open(Cho::CacheFile, "r") do |cf|
     i = 0
     cf.each do |l|
-      l.chomp!
-      dir   = Cho::ChoHome + '/' + l
-      if pat.nil? or pat =~ dir
-	tfile = dir + '/' + Cho::TitleFileName
-	if File.exist?(tfile)
-	  title = nil
-	  open(tfile, "r") do |tf|
-	    title = tf.gets.chomp
-	  end
-          if long
-            ufile = dir + '/' + Cho::UsedDateFileName
-            if File.exist?(ufile)
-              utime = nil
-              open(ufile, "r") do |uf|
-                utime = ' ' + Time.at(uf.gets.to_i).strftime('%Y/%m/%d')
-              end
-            else
-              utime = ' ????/??/??'
-            end
-          else
-            utime = ''
-          end
-	  printf "(%s)%s %s (%s)\n", Cho.numtotag(i) || '  ', utime, title, l
-	  $stdout.flush
-	# else: it does not exist (maybe unmounted), but is counted to generate tags
-	end
+      item = l.chomp
+      dpath = Cho::ChoHome + '/' + item
+      tfile = dpath + '/' + Cho::TitleFileName
+      if match_dirname(pat, item) or
+         grep_keywords && match_keywords(pat, tfile)
+        show_dirline(dpath, Cho.numtotag(i), item, long)
       end
       i += 1
     end
