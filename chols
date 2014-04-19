@@ -58,13 +58,11 @@ def main
   long = false          # -l
   grep_keywords = false # -k
   case_strict = false   # -s
-  help = false          # -h
 
   opt = OptionParser.new
   opt.on('-l', 'Long format (shows touched date)'){|v| long = true}
   opt.on('-k', 'Also search in title file'){|v| grep_keywords = true}
   opt.on('-s', 'Case-strict search'){|v| case_strict = true}
-  opt.on('-h', 'Show this help'){|v| help = true}
   opt.parse!(ARGV)
 
   case ARGV.size
