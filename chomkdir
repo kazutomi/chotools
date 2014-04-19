@@ -1,5 +1,13 @@
 #!/usr/bin/env ruby
 # coding: utf-8
+#
+# chomkdir - make a cho-directory
+#
+# Copyright (c) 2014 Kazuto Tominaga
+#
+# This software is released under the MIT License.
+# http://opensource.org/licenses/mit-license.php
+
 $KCODE = 'UTF8' if RUBY_VERSION < '1.9.0'
 
 # load my library
