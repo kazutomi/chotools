@@ -25,7 +25,11 @@ def main
   end
 
   relpath = Cho.diffdir(Dir.pwd, Cho::ChoHome)
-  puts relpath
+  Cho.each do |i, tag, item, dpath|
+    if relpath.start_with?(item)
+      puts "(#{tag}) #{item}"
+    end
+  end
   0
 end
 
