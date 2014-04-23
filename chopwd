@@ -27,7 +27,12 @@ def main
   relpath = Cho.diffdir(Dir.pwd, Cho::ChoHome)
   Cho.each do |i, tag, item, dpath|
     if relpath.start_with?(item)
-      puts "(#{tag}) #{item}"
+      begin
+        title = ''
+        open(dpath + '/' + Cho::TitleFileName) { |f| title = f.gets.chomp }
+      rescue Errno::ENOENT
+      end
+      puts "(#{tag}) #{title} (#{item})"
     end
   end
   0
