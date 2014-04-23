@@ -1,0 +1,41 @@
+#!/usr/bin/env ruby
+# coding: utf-8
+#
+# chopwd - show current cho-directory (or directories)
+#
+# Copyright (c) 2014 Kazuto Tominaga
+#
+# This software is released under the MIT License.
+# http://opensource.org/licenses/mit-license.php
+
+$KCODE = 'UTF8' if RUBY_VERSION < '1.9.0'
+
+# load my library
+Libdir=File.dirname(__FILE__)
+require "#{Libdir + '/cholib.rb'}"
+
+def usage
+  $stderr.puts "usage: #{File.basename(__FILE__)} <dir>"
+end
+
+def main
+  if ARGV.size != 0
+    usage
+    exit 1
+  end
+
+  relpath = Cho.diffdir(Dir.pwd, Cho::ChoHome)
+  Cho.each do |i, tag, item, dpath|
+    if relpath.start_with?(item)
+      begin
+        title = ''
+        open(dpath + '/' + Cho::TitleFileName) { |f| title = f.gets.chomp }
+      rescue Errno::ENOENT
+      end
+      puts "(#{tag}) #{title} (#{item})"
+    end
+  end
+  0
+end
+
+main

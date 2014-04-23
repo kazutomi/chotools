@@ -86,17 +86,10 @@ def main
     usage; exit 1
   end
 
-  open(Cho::CacheFile, "r") do |cf|
-    i = 0
-    cf.each do |l|
-      item = l.chomp
-      dpath = Cho::ChoHome + '/' + item
-      tfile = dpath + '/' + Cho::TitleFileName
-      if match_dirname(pat, item) or
-         grep_keywords && match_keywords(pat, tfile)
-        show_dirline(dpath, Cho.numtotag(i), item, long)
-      end
-      i += 1
+  Cho.each do |i, tag, item, dpath|
+    tfile = dpath + '/' + Cho::TitleFileName
+    if match_dirname(pat, item) or grep_keywords && match_keywords(pat, tfile)
+      show_dirline(dpath, tag, item, long)
     end
   end
   0
