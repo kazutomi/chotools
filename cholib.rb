@@ -35,6 +35,18 @@ module Cho
     end
   end
 
+  def self.each
+    open(Cho::CacheFile, "r") do |cf|
+      i = 0
+      cf.each do |l|
+        item = l.chomp
+        dpath = Cho::ChoHome + '/' + item
+        yield i, Cho.numtotag(i), item, dpath
+        i += 1
+      end
+    end
+  end
+
   def self.numtotag(num)
     if (tag = NumToTag[num])
       tag
