@@ -258,7 +258,7 @@ module Cho
       STDERR.print "Title: "
       f.puts STDIN.gets.strip
       STDERR.print "Keywords (space separated): "
-      f.puts STDIN.gets.strip.split.join("\n")
+      f.puts STDIN.gets.gsub(/([^\\]) /){"#{$1}\n"}.gsub(/\\(.)/){$1}
     end
   end
 
