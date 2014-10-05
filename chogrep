@@ -10,12 +10,7 @@
 
 $KCODE = 'UTF8' if RUBY_VERSION < '1.9.0'
 
-def warn
-  $stderr.puts "Warning: Please use \"chols -k <pattern>\" instead."
-end
-
 def main
-  warn
   system 'chols', '-k', *ARGV if ARGV.size > 0
 end
 
