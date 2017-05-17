@@ -4,7 +4,7 @@ function chocd {
   if [ $# = 0 -a "$CHODEFHOME" != "" ]; then
     cd "$CHODEFHOME"
   elif [ $# = 1 ]; then
-    cd `chomap "$1"`
+    cd "`chomap $1`"
   else
     echo "usage: chocd [tag]" 1>&2
   fi
